@@ -3,7 +3,7 @@
 Discord bot that also trades based on messages from discord.
 Data is closed source, so we are relying on discord alerts from the closed source indicator for positions.
 
-config.json:
+**config.json:**
 
 Refer: https://discordjs.guide/#before-you-begin
 
@@ -13,12 +13,12 @@ Refer: https://discordjs.guide/#before-you-begin
     "guildId": "YOURGUILD"
 }
 
-Dependencies:
+**Dependencies:**
 
 discordjs
 
 
-Writing commands:
+**Writing commands:**
 
 const { SlashCommandBuilder } = require('discord.js');
 
