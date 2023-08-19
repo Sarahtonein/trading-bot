@@ -28,6 +28,8 @@ for (const folder of commandFolders) {
     }
 }
 
+//Discord branch
+
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
@@ -55,7 +57,6 @@ client.on(Events.InteractionCreate, interaction => {
     if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
 });
-
 
 
 client.on(Events.InteractionCreate, async interaction => {
