@@ -1,10 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+require('discord-reply')
 const { token } = require('./config.json');
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent'] });
+//const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers] });
 
 client.commands = new Collection();
 
@@ -32,6 +34,19 @@ client.once(Events.ClientReady, c => {
     console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
+
+/*@Dev 
+Is this outdated? */
+client.on('messageCreate', (message) => {
+    console.log("Received a message!");
+    let messageContent = message;
+    console.log(messageContent);
+    if (message.content.includes('ping')) {
+        message.reply('Pong!');
+    }
+});
+
+///
 client.on(Events.InteractionCreate, interaction => {
     console.log(interaction);
 });
@@ -40,6 +55,8 @@ client.on(Events.InteractionCreate, interaction => {
     if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
 });
+
+
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
