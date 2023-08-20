@@ -15,18 +15,18 @@ Refer: https://discordjs.guide/#before-you-begin
 
 **Dependencies:**
 
-discordjs
-discordreply
-cctx
-node
+ - discordjs
+ - discordreply
+ - cctx
+ - node
 
 
 **Running things:**
 
-Well, you need to configure Discord for a start.
-Secondly you need to setup an exchange API key, in this case we used phemex
-Third, you need to set those env variables
-fourth, run it and send commands to discord, see the fireworks.
+- Well, you need to configure Discord for a start.
+ - Secondly you need to setup an exchange API key, in this case we used phemex
+ - Third, you need to set those env variables
+ - fourth, run it and send commands to discord, see the fireworks.
 
 
 
