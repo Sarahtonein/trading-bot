@@ -2,14 +2,15 @@
 const ccxt = require('ccxt');
 const config = require('./config.json');
 
+const exchange = new ccxt.phemex({
+    apiKey: config.phemexApiId,
+    secret: config.phemexApiSecret,
+    options: {
+        defaultType: 'swap',
+    },
+});
+
 async function performTrade() {
-    const exchange = new ccxt.phemex({
-        apiKey: config.phemexApiId,
-        secret: config.phemexApiSecret,
-        options: {
-            defaultType: 'swap',
-        },
-    });
 
     // Load markets
     await exchange.loadMarkets();
@@ -28,13 +29,6 @@ async function performTrade() {
 }
 
 async function performShortTrade() {
-    const exchange = new ccxt.phemex({
-        apiKey: config.phemexApiId,
-        secret: config.phemexApiSecret,
-        options: {
-            defaultType: 'swap',
-        },
-    })
 
     await exchange.loadMarkets();
 
