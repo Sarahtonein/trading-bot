@@ -21,21 +21,12 @@ cctx
 node
 
 
-**Writing commands:**
+**Running things:**
 
-const { SlashCommandBuilder } = require('discord.js');
-
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('commands')
-        .setDescription('Replies with list of commands!'),
-    async execute(interaction) {
-        await interaction.reply('Discord commands are present are: /ping and /commands');
-    },
-};
-
-Commands must be loaded using deploy-commands.js.
-
+Well, you need to configure Discord for a start.
+Secondly you need to setup an exchange API key, in this case we used phemex
+Third, you need to set those env variables
+fourth, run it and send commands to discord, see the fireworks.
 
 
 
