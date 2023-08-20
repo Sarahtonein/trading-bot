@@ -16,6 +16,8 @@ Refer: https://discordjs.guide/#before-you-begin
 **Dependencies:**
 
 discordjs
+cctx
+node
 
 
 **Writing commands:**

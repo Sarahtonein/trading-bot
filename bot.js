@@ -3,8 +3,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 require('discord-reply')
 const { token } = require('./config.json');
-
-// Create a new client instance
+const tradingFunctions = require('./cctx');// Create a new client instance
 const client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent'] });
 //const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers] });
 
@@ -28,6 +27,8 @@ for (const folder of commandFolders) {
     }
 }
 
+//Discord branch
+
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
@@ -37,14 +38,77 @@ client.once(Events.ClientReady, c => {
 
 /*@Dev 
 Is this outdated? */
-client.on('messageCreate', (message) => {
-    console.log("Received a message!");
-    let messageContent = message;
-    console.log(messageContent);
+client.on('messageCreate', async (message) => {
     if (message.content.includes('ping')) {
         message.reply('Pong!');
+    } else if (message.content.includes('BTCUSDT BBWP is below 15%tile')) {
+        message.reply('Low volatility detected, looking for signals');
+
+        // Wait for a specific secondary message
+        const filter = (response) => {
+            return response.author.id === message.author.id;
+        };
+
+        try {
+            const collected = await message.channel.awaitMessages({
+                filter,
+                max: 1,
+                time: 60000, // Time in milliseconds to wait for a response
+                errors: ['time']
+            });
+
+            const responseMessage = collected.first();
+            if (responseMessage.content.includes('continuation bull divergence - is confirmed')) {
+                message.reply('cont bull div confirmed, placing long order');
+                (async () => {
+                    await tradingFunctions.performTrade();
+                    message.reply('ORDER PLACED SUCCESSFULLY!')
+
+                })();
+            } else if (responseMessage.content.includes('continuation bear divergence - is confirmed')) {
+                message.reply('Cont bear div confirmed');
+                (async () => {
+                    await tradingFunctions.performShortTrade();
+                    message.reply('ORDER PLACED SUCESSFULLY!')
+                })
+            } else if (responseMessage.content.includes('Regular Bear Divergence')) {
+                message.reply('Reg bear div confirmed');
+                (async () => {
+                    await tradingFunctions.performShortTrade();
+                    message.reply('ORDER PLACED SUCCESSFULLY!');
+                })
+            } else if (responseMessage.content.includes('Regular bull Divergenc')) {
+                message.reply('Reg bull div confirmed');
+                (async () => {
+                    await performTrade();
+                    message.reply('ORDER PLACED SUCCESSFULLY')
+                })
+            } else {
+                message.reply('No valid confirmation message received.');
+            }
+        } catch (error) {
+            console.error(error);
+            message.reply('No confirmation received within the time limit.');
+        }
     }
+
+    else if (message.content.includes('dxy')) {
+        message.reply('Quite easily the biggest ponzi in the world')
+    }
+    else if (message.content.includes('usd')) {
+        message.reply('Quite easily the biggest ponzi in the world')
+    }
+
 });
+
+/*Get ANY messages from author: User { 
+    id: '1081353818580721785',
+    bot: true, 
+    username: 'BBWP Signals'
+}*/
+
+
+
 
 ///
 client.on(Events.InteractionCreate, interaction => {
@@ -55,7 +119,6 @@ client.on(Events.InteractionCreate, interaction => {
     if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
 });
-
 
 
 client.on(Events.InteractionCreate, async interaction => {
