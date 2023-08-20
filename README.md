@@ -16,6 +16,7 @@ Refer: https://discordjs.guide/#before-you-begin
 **Dependencies:**
 
 discordjs
+discordreply
 cctx
 node
 
