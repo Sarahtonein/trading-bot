@@ -62,22 +62,41 @@ async function performTrade() {
     const leverageResponse = await exchange.setLeverage(leverage, symbol);
     console.log(`Leverage has been set to ${leverageResponse.leverage}`);
 
-    // Opening a (market) order
+    // Opening a (market) order, uncomment when ready to test
     // const order = await exchange.createOrder(symbol, 'market', 'buy', contractValue);
     // console.log(order);
 }
 
-async function main() {
-    performTrade();
-}
-
-main();
 //TODO
 //Build take profit function (12.5% chunks)
 //needs to check if a position is open, if not then ignore
 //function to get current positions
 
 
+//    fetchPositions(symbols?: string[], params?: {}): Promise<import("./base/types.js").Position[]>;
+async function getOpenPositions() {
+    const symbols = ['BTC/USD:USD']; // Replace with your desired symbols
+
+    try {
+        await exchange.loadMarkets(); // Load the markets first
+        const positions = await exchange.fetchPositions(symbols);
+
+        // Iterate over the list of positions
+        positions.forEach(position => {
+            const side = position.side;
+            const symbol = position.symbol;
+            const size = position.contracts;
+
+            console.log('Position Details:');
+            console.log('Side:', side);
+            console.log('Symbol:', symbol);
+            console.log('Size:', size);
+            console.log('---');
+        });
+    } catch (error) {
+        console.error('Error fetching open positions:', error);
+    }
+}
 /*
 Integrate this function with performTrade
 async function performShortTrade() {
@@ -90,13 +109,16 @@ async function performShortTrade() {
     console.log(order);
 }*/
 
+
+async function main() {
+    //   performTrade();
+    getOpenPositions();
+}
+
+main();
+
 module.exports = {
     performTrade,
-    //performShortTrade,
     getCurrentBitcoinPrice,
     getBitcoinPriceRange,
-
 };
-
-//retrieve info when position is closed or consistently poll for open positions
-//update balance (we need to be able to retrieve it.)
