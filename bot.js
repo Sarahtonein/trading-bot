@@ -70,19 +70,19 @@ client.on('messageCreate', async (message) => {
                 (async () => {
                     await tradingFunctions.performShortTrade();
                     message.reply('ORDER PLACED SUCESSFULLY!')
-                })
+                })();
             } else if (responseMessage.content.includes('Regular Bear Divergence')) {
                 message.reply('Reg bear div confirmed');
                 (async () => {
                     await tradingFunctions.performShortTrade();
                     message.reply('ORDER PLACED SUCCESSFULLY!');
-                })
+                })();
             } else if (responseMessage.content.includes('Regular bull Divergenc')) {
                 message.reply('Reg bull div confirmed');
                 (async () => {
                     await performTrade();
                     message.reply('ORDER PLACED SUCCESSFULLY')
-                })
+                })();
             } else {
                 message.reply('No valid confirmation message received.');
             }
@@ -94,9 +94,19 @@ client.on('messageCreate', async (message) => {
 
     else if (message.content.includes('dxy')) {
         message.reply('Quite easily the biggest ponzi in the world')
-    }
-    else if (message.content.includes('usd')) {
-        message.reply('Quite easily the biggest ponzi in the world')
+    } else if (message.content.includes('price')) {
+        try {
+            await message.reply('Fetching BTC value ...');
+            const currentPriceMessage = await tradingFunctions.getCurrentBitcoinPrice();
+            await message.reply(currentPriceMessage);
+
+            await message.reply('Fetching BTC value range...');
+            const priceRangeMessage = await tradingFunctions.getBitcoinPriceRange();
+            await message.reply(priceRangeMessage);
+        } catch (error) {
+            console.error(error);
+            message.reply('An error occurred while fetching data.');
+        }
     }
 
 });
