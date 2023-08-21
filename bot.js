@@ -7,6 +7,12 @@ const tradingFunctions = require('./cctx');// Create a new client instance
 const client = new Client({ intents: ['Guilds', 'GuildMessages', 'MessageContent'] });
 //const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMembers] });
 
+
+/*TODO 
+Clean up the bot file os that it doesn't have all the discord shit in here
+I'm sure there's a lot more to do.
+*/
+
 client.commands = new Collection();
 
 const foldersPath = path.join(__dirname, 'commands');
@@ -107,6 +113,11 @@ client.on('messageCreate', async (message) => {
             console.error(error);
             message.reply('An error occurred while fetching data.');
         }
+    }
+    else if (message.content.includes('balance')) {
+        const balance = await tradingFunctions.getBalanceAndRisk();
+        console.log(balance);
+        await message.reply(`Current details: ${balance}`);
     }
 
 });

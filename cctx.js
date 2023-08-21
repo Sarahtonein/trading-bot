@@ -9,12 +9,12 @@ const exchange = new ccxt.phemex({
     },
 });
 
-
 async function getCurrentBitcoinPrice() {
     const symbol = 'BTC/USD:USD';
     const ticker = await exchange.fetchTicker(symbol);
     const currentPrice = ticker.last;
-    return `Current Bitcoin Price: ${currentPrice}`;
+    console.log(`The current price of BTC is: ${currentPrice} `);
+    return currentPrice;
 }
 
 async function getBitcoinPriceRange() {
@@ -24,23 +24,62 @@ async function getBitcoinPriceRange() {
 
     const highestPrice = Math.max(...ohlcv.map(entry => entry[2])); // High price is at index 2
     const lowestPrice = Math.min(...ohlcv.map(entry => entry[3]));  // Low price is at index 3
-    return `Highest Bitcoin Price 88 hours ago: ${highestPrice}\nLowest Bitcoin Price 88 hours ago: ${lowestPrice}`;
+    console.log(`The lowest price of BTC in the last 88 hrs is: ${lowestPrice}`);
+    return { highestPrice, lowestPrice };
 }
 
 async function performTrade() {
-    // Load markets
     await exchange.loadMarkets();
-    const amount = 1; // This represents one CONTRACT, not 1 of the token/coin
-    const symbol = 'BTC/USD:USD'; // Use the correct symbol format // exchange.markets? to
+
+    const riskPercentage = 0.04; // 4% risk per trade
+    const currencyCode = 'USD'; // Currency code of the trading account
+
+    // Fetch balance and calculate risk amount
+    const accountInfo = await exchange.fetchBalance({ code: currencyCode });
+    const usdBalance = accountInfo.total[currencyCode];
+    const riskAmount = usdBalance * riskPercentage;
+
+    const currentPrice = await getCurrentBitcoinPrice();
+    const currentPriceRange = await getBitcoinPriceRange();
+    const lowestPrice = currentPriceRange.lowestPrice;
+
+    // Calculate stop loss percentage
+    const stopLossPercentage = (currentPrice - lowestPrice) / currentPrice;
+
+    // Calculate the leverage relative to 2% risk
+    const leverage = (riskPercentage / stopLossPercentage).toFixed(2);
+
+    console.log(`Calculated Leverage: ${leverage}`);
+    console.log(`Calculated Stop Loss Percentage: ${(stopLossPercentage * 100).toFixed(2)}%`);
+
+    // Calculate trade amount
+    const symbol = 'BTC/USD:USD';
+    const contractValue = riskAmount * leverage;
+
+    console.log(`Contract Value: ${contractValue}`);
+
     // Change leverage to the desired value
-    const leverageResponse = await exchange.setLeverage(50, symbol);
-    console.log(leverageResponse);
-    let currentPrice = await getCurrentBitcoinPrice();
+    const leverageResponse = await exchange.setLeverage(leverage, symbol);
+    console.log(`Leverage has been set to ${leverageResponse.leverage}`);
+
     // Opening a (market) order
-    const order = await exchange.createOrder(symbol, 'market', 'buy', amount);
-    console.log(order);
+    // const order = await exchange.createOrder(symbol, 'market', 'buy', contractValue);
+    // console.log(order);
 }
 
+async function main() {
+    performTrade();
+}
+
+main();
+//TODO
+//Build take profit function (12.5% chunks)
+//needs to check if a position is open, if not then ignore
+//function to get current positions
+
+
+/*
+Integrate this function with performTrade
 async function performShortTrade() {
     await exchange.loadMarkets();
     const amount = 1;
@@ -49,13 +88,14 @@ async function performShortTrade() {
     console.log(leverageResponse);
     const order = await exchange.createOrder(symbol, 'market', 'sell', amount);
     console.log(order);
-}
+}*/
 
 module.exports = {
     performTrade,
-    performShortTrade,
+    //performShortTrade,
     getCurrentBitcoinPrice,
-    getBitcoinPriceRange
+    getBitcoinPriceRange,
+
 };
 
 //retrieve info when position is closed or consistently poll for open positions
